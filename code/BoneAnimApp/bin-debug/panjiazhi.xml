@@ -3,7 +3,7 @@
 {"id":1,"name":"德川家康","avatar":"erchiyuan001"},
 {"id":2,"name":"日向百合子","avatar":"erchiyuan002"},
 {"id":3,"name":"上杉谦信","avatar":"erchiyuan003"},
-{"id":4,"name":"太刀手","avatar":"erchiyuan004"},
+{"id":4,"name":"太刀手","avatar":"dds_2021_6_11_001"},
 {"id":5,"name":"薙刀","avatar":"erchiyuan005"},
 {"id":6,"name":"弓箭手","avatar":"erchiyuan006"}
 
@@ -106,17 +106,14 @@
 {"id":98779,"name":"联机夺宝","model":"map1"}
 ]},
 
-{"name":"skilltabeltest","list":[
-{"id":555555,"name":"测试技能5555","skill":"555555"},
-{"id":666666,"name":"测试技能6666","skill":"666666"}
-]},
+ 
 
 
 {"name":"skilltabel","list":[
 {"id":1,"name":"德川家康","skill":"erchijinen001"},
 {"id":2,"name":"日向百合子","skill":"erchijinen002"},
 {"id":3,"name":"上杉谦信","skill":"erchijinen003"},
-{"id":4,"name":"太刀手","skill":"erchijinen004"},
+{"id":4,"name":"太刀手","skill":"dds_2021_6_11_001"},
 {"id":5,"name":"薙刀","skill":"erchijinen005"},
 {"id":6,"name":"弓箭手","skill":"erchijinen006"}
 ]}]}

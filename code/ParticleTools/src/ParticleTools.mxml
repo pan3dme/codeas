@@ -74,7 +74,7 @@
 			private function init():void{
 				checkForUpdate();
 			}
-			/** 设置初始化模式 */
+			/** 设置初始3化模式 */
 			protected function addedToStageHandler(event:Event):void
 			{
 				
