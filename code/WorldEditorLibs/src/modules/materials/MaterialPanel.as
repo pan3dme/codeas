@@ -65,6 +65,7 @@ package modules.materials
 		private var _materialTree:MaterialTree;
 		private var _materialCtrl:MaterialCtrl;
 		private var _materialGLSLTree:MaterialTree;
+		private var _materialIOSTree:MaterialTree;
 		
 		private var _materialPreView:MaterialPreViewUI;
 		private var _materialToolMenuView:MaterialToolMenuView;
@@ -174,13 +175,14 @@ package modules.materials
 			var evt:MEvent_Material = new MEvent_Material(MEvent_Material.MEVENT_MATERIAL_SAVE);
 			evt.material = _materialTree;
 			evt.glslMaterial = _materialGLSLTree;
+			evt.iosMaterial = _materialIOSTree;
 			ModuleEventManager.dispatchEvent(evt);
 		}
 		
 		private function  compileMaterial():void
 		{
 			var _compile:MaterialCompile = new MaterialCompile;
-			_compile.compile(_materialCtrl.nodeList,_materialTree,_materialGLSLTree);
+			_compile.compile(_materialCtrl.nodeList,_materialTree,_materialGLSLTree,_materialIOSTree);
 			
 			_materialPreView.material = _materialTree
 		}
@@ -249,10 +251,11 @@ package modules.materials
 			_materialTree = $material;
 			_materialCtrl = new MaterialCtrl;
 			_materialGLSLTree = new MaterialTree();
+			_materialIOSTree = new MaterialTree();
 			//addResultNode();
 			buildMaterialView(_materialTree.data);
 			var _compile:MaterialCompile = new MaterialCompile;
-			_compile.compile(_materialCtrl.nodeList,$material,_materialGLSLTree);
+			_compile.compile(_materialCtrl.nodeList,$material,_materialGLSLTree,_materialIOSTree);
 			//_materialPreView.material = _materialTree
 		}
 		

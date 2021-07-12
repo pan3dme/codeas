@@ -121,7 +121,7 @@ package modules.materials
 					if($me.action == MEvent_Material.MEVENT_MATERIAL_SHADOW_SHOW){
 						showMaterialShadow(MEvent_Material($me).materialShadow);
 					}else if($me.action == MEvent_Material.MEVENT_MATERIAL_SAVE){
-						saveMaterial(MEvent_Material($me).material as MaterialTree,MEvent_Material($me).glslMaterial as MaterialTree);
+						saveMaterial(MEvent_Material($me).material as MaterialTree,MEvent_Material($me).glslMaterial as MaterialTree,MEvent_Material($me).iosMaterial as MaterialTree);
 					}
 					else 
 					if($me.action == MEvent_Material.MEVENT_MATERIAL_PROP){
@@ -371,7 +371,7 @@ package modules.materials
 			NodeTreePropManager.getInstance().showNode($ui);
 		}
 		
-		public function saveMaterial($materialTree:MaterialTree,$glslMaterialTree:MaterialTree):void{
+		public function saveMaterial($materialTree:MaterialTree,$glslMaterialTree:MaterialTree,$iosMaterialTree:MaterialTree):void{
 			$materialTree.url=$materialTree.url.replace(AppData.workSpaceUrl,"")
 			var file:File = new File(AppData.workSpaceUrl+$materialTree.url);
 			var fs:FileStream = new FileStream;
@@ -386,8 +386,10 @@ package modules.materials
 			
 			var glslUrl:String = tempUrl + "/" + filename + ".txt";//file.url.replace("material","txt");
 			//var glslUrl:String = "file:///C:/workts/WebGLEngine/WebGLEngine/assets/material.txt"
+			var compileData :Object=$glslMaterialTree.compileData;
+			compileData.iosMtlStr = $iosMaterialTree.shaderStr;
 			file = new File(glslUrl);
-			var str:String = JSON.stringify($glslMaterialTree.compileData);
+			var str:String = JSON.stringify(compileData);
 			fs = new FileStream;
 			fs.open(file,FileMode.WRITE);
 			fs.writeUTFBytes(str);
@@ -395,7 +397,7 @@ package modules.materials
 			
 			//MaterialSaveModel.getInstance().buildMaterialByUrl($materialTree.url)
 			
-			MaterialSaveModel.getInstance().saveByteMaterial($glslMaterialTree.compileData,glslUrl)
+			MaterialSaveModel.getInstance().saveByteMaterial(compileData,glslUrl)
 			
 			var $bmp:BitmapData=_materialView.materialPreView.materialRenderView.renderBimp.bitmapData
 			if($bmp){

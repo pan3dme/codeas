@@ -20,12 +20,14 @@ package modules.materials.treedata
 		
 		private var _compileGlslServer:CompileTwo = new CompileTwo;
 		
+		private var _compileIosServer:CompileThree = new CompileThree;
+		
 		public function MaterialCompile()
 		{
 			
 		}
 		
-		public function compile($list:Vector.<NodeTree>,$materialTree:MaterialTree,$materialGLSLTree:MaterialTree):void{
+		public function compile($list:Vector.<NodeTree>,$materialTree:MaterialTree,$materialGLSLTree:MaterialTree,_materialIOSTree:MaterialTree):void{
 			nodeList = $list;
 			resetCompile($list);
 			resetPriority();
@@ -60,6 +62,13 @@ package modules.materials.treedata
 			resetCompile($list);
 			
 			_compileGlslServer.compile(priorityList,$materialGLSLTree);
+			
+			resetCompile($list);
+			
+			_compileIosServer.compile(priorityList,_materialIOSTree);
+			
+			
+			
 		}
 		
 		public function resetCompile($list:Vector.<NodeTree>):void{

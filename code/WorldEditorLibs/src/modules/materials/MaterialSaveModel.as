@@ -136,6 +136,7 @@ package modules.materials
 			
 			writeTextListArr(fs,_compileData.texList)
 			writeConstListArr(fs,_compileData.constList)
+			fs.writeUTF(_compileData.iosMtlStr)
 			
 			
 			fs.close();

@@ -35,6 +35,7 @@ package common.msg.event.materials
 		public var name:String;
 		public var material:Material;
 		public var glslMaterial:Material;
+		public var iosMaterial:Material;
 		
 		public var materialReflect:MaterialReflect;
 		public var materialCubemap:MaterialCubeMap;

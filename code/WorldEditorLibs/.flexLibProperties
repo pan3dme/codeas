@@ -111,6 +111,7 @@
     <classEntry path="modules.expres.ExpMapPicInfoWindow"/>
     <classEntry path="modules.expres.ExpMapPicInfoPanel"/>
     <classEntry path="modules.hierarchy.h5.ExpGroupToByteModel"/>
+    <classEntry path="modules.materials.treedata.CompileThree"/>
   </includeClasses>
   <includeResources/>
   <namespaceManifests/>
