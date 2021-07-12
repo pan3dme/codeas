@@ -453,6 +453,7 @@ package modules.materials.treedata
 			//"uniform sampler2D s_texture;\n" +
 			var hasParticleColor:Boolean = false;
 			var texStr:String = new String;
+			var fcIdx:Number=0;
 			for(i = 0;i < this.texVec.length;i++){
 				if(this.texVec[i].type == 3){
 //					texStr += "uniform samplerCube fs" + this.texVec[i].id  + ";\n";
@@ -460,7 +461,7 @@ package modules.materials.treedata
 //					texStr += "uniform sampler2D fs" + this.texVec[i].id  + ";\n";
 					texStr+=",texture2d<half> fs" + this.texVec[i].id  + " [[ texture("+this.texVec[i].id  +")]]"+LN
 				}
-				
+				fcIdx++;
 				if(this.texVec[i].isParticleColor){
 					hasParticleColor = true;
 				}
@@ -469,7 +470,7 @@ package modules.materials.treedata
 			
 			var constStr:String = new String;
 		 
-			/*
+			 
 			var maxID:int = 0;
 			if(this.constVec.length){
 				maxID = this.constVec[this.constVec.length-1].id + 1;
@@ -482,10 +483,13 @@ package modules.materials.treedata
 			this.fcNum = maxID;
 			
 			if(this.fcNum > 0){
-				constStr += "uniform vec4 fc[" + (this.fcNum) + "];\n";
+				//		constant FcItemInfo *infodata [[ buffer(1) ]]
+//				constStr += "uniform vec4 fc[" + (this.fcNum) + "];\n";
+				//纹理ID后
+				constStr +=COMMA+ "constant FcItemInfo *infodata [[ buffer("+fcIdx+") ]]\n";
 			}
-			*/
-			
+			 
+	
 			
 			
 			
@@ -525,9 +529,49 @@ package modules.materials.treedata
 			
 			var resultStr:String = perStr + texStr + constStr + varyStr + beginStr + mainStr + endStr;
 	
+	 
+		return changeFcToIos(resultStr);
+		}
+		//转换FC得变量
+		private function changeFcToIos(resultStr:String ):String{
+			var ary:Array = resultStr.split("\n");
+			var outStr:String="";
+			for(var i:Number = 0;i<ary.length;i++){
+				  
+				var str:String=ary[i];
+				var fcpos:Number=str.indexOf("fc[");
+				if(fcpos!=-1){
+			     var astr:String=str.substring(fcpos,str.length);
+				 var fcEpos:Number=astr.indexOf("]");
+				 var fcNumStr=str.substr(fcpos,fcEpos+1);
+				 var xyzkey:String= astr.substr(fcEpos,4);
+				 var len:Number=0;
+				 var halfStr:String="";
+				 if(xyzkey.indexOf(".xyz")!=-1){
+					 len=4;
+					 halfStr="half3";
+				 }else  if(xyzkey.indexOf(".xy")!=-1){
+					 halfStr="half2";
+					 len=3;
+				 }else  if(xyzkey.indexOf(".x")!=-1){
+					 halfStr="half1";
+					 len=2;
+				 }else {
+					 halfStr="half4";
+					 len=0;
+				 }
+				 
+				 var beStr:String=str.substring(0,fcpos);
+				 var overStr= astr.substring(fcEpos+len+1,astr.length);
+				 str= beStr+halfStr+"(infodata->"+fcNumStr+")"+overStr;
+					
+					
+				}
+				outStr+=LN+str;
 			
-	 	var testOutStr:String=	"fragment float4   fragmentMaterialShader(MaterialOutVertices input [[stage_in]],\ntexture2d<half> fs0 [[ texture(0)]] )\n{\nconstexpr sampler textureSampler (mag_filter::linear, min_filter::linear);\nhalf4 ft0 = fs0.sample(textureSampler, input.v0);\nhalf4 ft1=half4(ft0.xyz,1.0);\nhalf4 ft2=half4(0,0,0,1);\nft2.xyz = ft1.xyz;\nft2.w = 1.0;\nreturn float4(ft2);\n}";
-			return resultStr;
+				 
+			}
+			return outStr;
 		}
 		
 		private function processMainTex():void{
