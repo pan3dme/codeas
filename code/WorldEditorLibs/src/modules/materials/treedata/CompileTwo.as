@@ -417,7 +417,7 @@ package modules.materials.treedata
 			$materialTree.fcNum = this.fcNum;
 			$materialTree.fcIDAry = [this._camposID,this._fogcolorID,this._scalelightmapID];
 			
-			$materialTree.dispatchEvent(new Event(Event.CHANGE));
+//			$materialTree.dispatchEvent(new Event(Event.CHANGE));
 			trace("--Glsl Shader--");
 			//trace(resultStr);
 			var ary:Array = resultStr.split("\n");

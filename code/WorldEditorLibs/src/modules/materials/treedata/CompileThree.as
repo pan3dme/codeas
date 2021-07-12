@@ -47,7 +47,7 @@ package modules.materials.treedata
 		public static var FS:String = "fs";
 		public static var VI:String = "v";
 		public static var OP:String = "op";
-		public static var FO:String = "gl_FragColor";
+		public static var FO:String = "return";
 		public static var XYZ:String = ".xyz";
 		public static var XY:String = ".xy";
 		public static var X:String = ".x";
@@ -109,15 +109,15 @@ package modules.materials.treedata
 		public static var KIL:String = "kil";
 		public static var M33:String = "m33";
 		
-		public static var VEC4:String = "vec4";
-		public static var VEC3:String = "vec3";
-		public static var VEC2:String = "vec2";
+		public static var VEC4:String = "half4";
+		public static var VEC3:String = "half3";
+		public static var VEC2:String = "half2";
 		public static var EQU:String = "=";
 		public static var texture2D:String = "texture2D";
 		public static var textureCube:String = "textureCube";
 		public static var LEFT_PARENTH:String = "(";
 		public static var RIGHT_PARENTH:String = ")";
-		public static var DEFAULT_VEC4:String = "vec4(0,0,0,1)";
+		public static var DEFAULT_VEC4:String = "half4(0,0,0,1)";
 		public static var MIX:String = "mix";
 		public static var REFLECT:String = "reflect";
 		public static var IF:String = "if";
@@ -417,7 +417,7 @@ package modules.materials.treedata
 			$materialTree.fcNum = this.fcNum;
 			$materialTree.fcIDAry = [this._camposID,this._fogcolorID,this._scalelightmapID];
 			
-			$materialTree.dispatchEvent(new Event(Event.CHANGE));
+//			$materialTree.dispatchEvent(new Event(Event.CHANGE));
 			trace("--Glsl Shader--");
 			//trace(resultStr);
 			var ary:Array = resultStr.split("\n");
@@ -441,22 +441,24 @@ package modules.materials.treedata
 		}
 		
 		private function getGLSLStr():String{
-			
+
 			
 			var mainStr:String = new String;
 			for(var i:int=0;i<strVec.length;i++){
 				mainStr += strVec[i] + "\n";
 			}
+ 
 			
-			var perStr:String = "precision mediump float;\n";
+			var perStr:String = "fragment float4   fragmentMaterialShader("+LN+"MaterialOutVertices input [[stage_in]]"+LN;
 			//"uniform sampler2D s_texture;\n" +
 			var hasParticleColor:Boolean = false;
 			var texStr:String = new String;
 			for(i = 0;i < this.texVec.length;i++){
 				if(this.texVec[i].type == 3){
-					texStr += "uniform samplerCube fs" + this.texVec[i].id  + ";\n";
+//					texStr += "uniform samplerCube fs" + this.texVec[i].id  + ";\n";
 				}else{
-					texStr += "uniform sampler2D fs" + this.texVec[i].id  + ";\n";
+//					texStr += "uniform sampler2D fs" + this.texVec[i].id  + ";\n";
+					texStr+=",texture2d<half> fs" + this.texVec[i].id  + " [[ texture("+this.texVec[i].id  +")]]"+LN
 				}
 				
 				if(this.texVec[i].isParticleColor){
@@ -466,28 +468,8 @@ package modules.materials.treedata
 			
 			
 			var constStr:String = new String;
-			
-			//			if(hasTime || this.usePbr || this.useKill){
-			//				constStr += "uniform vec4 fc" + 0 + ";\n";
-			//			}
-			//			
-			//			if(this.usePbr || this.fogMode == 1){
-			//				constStr += "uniform vec4 fc" + 2 + ";\n";
-			//			}
-			//			
-			//			if(this.scaleLightMap){
-			//				constStr += "uniform float " + scalelight + ";\n";
-			//			}
-			//			
-			//			if(this.fogMode != 0){
-			//				constStr += "uniform vec2 " + fogdata + ";\n";
-			//				constStr += "uniform vec3 " + fogcolor + ";\n";
-			//			}
-			//			
-			//			for(i = 0;i < this.constVec.length;i++){
-			//				constStr += "uniform vec4 fc" + this.constVec[i].id + ";\n";
-			//			}
-			
+		 
+			/*
 			var maxID:int = 0;
 			if(this.constVec.length){
 				maxID = this.constVec[this.constVec.length-1].id + 1;
@@ -502,11 +484,13 @@ package modules.materials.treedata
 			if(this.fcNum > 0){
 				constStr += "uniform vec4 fc[" + (this.fcNum) + "];\n";
 			}
+			*/
 			
 			
 			
 			
 			var varyStr:String = new String;
+			/*
 			varyStr +=  "varying vec2 v0;\n";
 			if(this.lightProbe || this.directLight){
 				varyStr +=  "varying vec3 v2;\n";
@@ -533,19 +517,17 @@ package modules.materials.treedata
 			if(hasParticleColor){
 				varyStr +=  "varying vec2 v1;\n";
 			}
+			*/
+			var beginStr:String =LN+ "){"+LN+"constexpr sampler textureSampler (mag_filter::linear, min_filter::linear);\n";
+			var endStr:String = LN+"}";
 			
-			var beginStr:String = "void main(void){\n\n";
-			var endStr:String = "\n}";
-			
-			
+		
 			
 			var resultStr:String = perStr + texStr + constStr + varyStr + beginStr + mainStr + endStr;
+	
 			
-			
-			
-		var testOutStr:String=	"fragment float4   fragmentMaterialShader(MaterialOutVertices input [[stage_in]],\ntexture2d<half> textureColor [[ texture(0)]]\n){\nconstexpr sampler textureSampler (mag_filter::linear, min_filter::linear);\nhalf4 colorTexA = textureColor.sample(textureSampler, input.vTextCoord);\nif (colorTexA.w <= 0.8) {\n   discard_fragment();\n};\nfloat4 outInfo=float4(colorTexA);\nreturn outInfo;\n}";
-			
-			return testOutStr;
+	 	var testOutStr:String=	"fragment float4   fragmentMaterialShader(MaterialOutVertices input [[stage_in]],\ntexture2d<half> fs0 [[ texture(0)]] )\n{\nconstexpr sampler textureSampler (mag_filter::linear, min_filter::linear);\nhalf4 ft0 = fs0.sample(textureSampler, input.v0);\nhalf4 ft1=half4(ft0.xyz,1.0);\nhalf4 ft2=half4(0,0,0,1);\nft2.xyz = ft1.xyz;\nft2.w = 1.0;\nreturn float4(ft2);\n}";
+			return resultStr;
 		}
 		
 		private function processMainTex():void{
@@ -1103,7 +1085,10 @@ package modules.materials.treedata
 					var regtexLightMap:RegisterItem = getFragmentTex();
 					// ve4 ft0 = texture2D(fs0,v1);
 					// ft0.xyz = ft0.xyz * 5.0;
-					str = resultStr + SPACE + EQU + SPACE + texture2D + LEFT_PARENTH + FS + regtexLightMap.id + COMMA + VI + defaultLightUvReg.id + RIGHT_PARENTH + END + LN;
+//					str = resultStr + SPACE + EQU + SPACE + texture2D + LEFT_PARENTH + FS + regtexLightMap.id + COMMA + VI + defaultLightUvReg.id + RIGHT_PARENTH + END + LN;
+  
+					str = resultStr + SPACE + EQU + SPACE + FS + regtexLightMap.id +".sample(textureSampler,input."+VI + defaultLightUvReg.id + RIGHT_PARENTH + END + LN;
+					
 					if(this.scaleLightMap){
 						str += FT + regtempLightMap.id + XYZ + SPACE + EQU + SPACE + FT + regtempLightMap.id + XYZ + SPACE +  MUL_MATH + SPACE +  scalelight + END;
 					}else{
@@ -1549,7 +1534,8 @@ package modules.materials.treedata
 			
 			str = new String;
 			//"gl_FragColor = infoUv;\n" +
-			str = FO + SPACE + EQU + SPACE + FT + regOp.id + END;
+//			str = FO + SPACE + EQU + SPACE + FT + regOp.id + END;
+			str="return float4("+ FT + regOp.id+")" + END
 			strVec.push(str);
 			
 			
@@ -1649,9 +1635,8 @@ package modules.materials.treedata
 				//str = TEX + SPACE + FT + regtemp.id + COMMA + pNode.getComponentID(input.parentNodeItem.id) + COMMA + FS + regtex.id + SPACE + getTexType(NodeTreeTex($node).wrap);
 				str = resultStr + SPACE + EQU + SPACE + texture2D + LEFT_PARENTH + FS + regtex.id + COMMA + pNode.getComponentID(input.parentNodeItem.id) + RIGHT_PARENTH + END;
 			}else{
-				//str = TEX + SPACE + FT + regtemp.id + COMMA + VI + defaultUvReg.id + COMMA + FS + regtex.id + SPACE + getTexType(NodeTreeTex($node).wrap);
-				
-				str = resultStr + SPACE + EQU + SPACE + texture2D + LEFT_PARENTH + FS + regtex.id + COMMA + VI + defaultUvReg.id + RIGHT_PARENTH + END;
+
+				str=resultStr + SPACE + EQU + SPACE + FS + regtex.id+".sample(textureSampler,input."+VI + defaultUvReg.id+ RIGHT_PARENTH + END;
 			}
 			if(NodeTreeTex($node).permul){
 				str += LN + FT + regtemp.id + XYZ + SPACE + MUL_EQU_MATH + SPACE + FT + regtemp.id + W + END;
