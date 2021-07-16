@@ -121,7 +121,7 @@ package modules.materials.treedata
 		public static var MIX:String = "mix";
 		public static var REFLECT:String = "reflect";
 		public static var IF:String = "if";
-		public static var DISCARD:String = "{discard;}";
+		public static var DISCARD:String = "{discard_fragment();}";
 		public static var scalelight:String = "scalelight";
 		//public static var fogdata:String = "fogdata";
 		//public static var fogcolor:String = "fogcolor";
@@ -548,24 +548,22 @@ package modules.materials.treedata
 				 var len:Number=0;
 				 var halfStr:String="";
 				 if(xyzkey.indexOf(".xyz")!=-1){
-					 len=4;
+					 len=0;
 					 halfStr="half3";
 				 }else  if(xyzkey.indexOf(".xy")!=-1){
 					 halfStr="half2";
-					 len=3;
-				 }else  if(xyzkey.indexOf(".x")!=-1){
-					 halfStr="half1";
-					 len=2;
+					 len=0;
 				 }else {
 					 halfStr="half4";
 					 len=0;
 				 }
 				 
+				 
 				 var beStr:String=str.substring(0,fcpos);
 				 var overStr= astr.substring(fcEpos+len+1,astr.length);
 				 str= beStr+halfStr+"(infodata->"+fcNumStr+")"+overStr;
 					
-					
+				 str=str;
 				}
 				outStr+=LN+str;
 			
