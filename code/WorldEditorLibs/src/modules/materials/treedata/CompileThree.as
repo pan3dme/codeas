@@ -1629,9 +1629,12 @@ package modules.materials.treedata
 				regtemp.hasInit = true;
 			}
 			
-			str = resultStr + SPACE + EQU + SPACE + texture2D + LEFT_PARENTH + FS + regtex.id + COMMA + VI + defaultPtReg.id + RIGHT_PARENTH + END + LN;
-			//str = TEX + SPACE + FT + regtemp.id + COMMA + VI + defaultPtReg.id + COMMA + FS + regtex.id + SPACE + texType;
-			//
+//			str = resultStr + SPACE + EQU + SPACE + texture2D + LEFT_PARENTH + FS + regtex.id + COMMA + VI + defaultPtReg.id + RIGHT_PARENTH + END + LN;
+			// half4 ft0 = fs0.sample(textureSampler,input.v0);
+			//0  half4 ft1 = texture2D(fs1,v1);
+			
+			str = resultStr + SPACE + EQU + SPACE + FS + regtex.id +".sample(textureSampler,input."+VI + defaultPtReg.id +RIGHT_PARENTH+ END + LN;
+			
 			//ft5.xyz = ft5.xyz * ft5.w
 			str += FT + regtemp.id + XYZ + SPACE + EQU + SPACE + FT + regtemp.id + XYZ + SPACE + MUL_MATH + SPACE + FT + regtemp.id + W + END;
 			
