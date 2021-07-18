@@ -522,7 +522,7 @@ package modules.materials.treedata
 				varyStr +=  "varying vec2 v1;\n";
 			}
 			*/
-			var beginStr:String =LN+ "){"+LN+"constexpr sampler textureSampler (mag_filter::linear, min_filter::linear);\n";
+			var beginStr:String =LN+ "){"+LN+"constexpr sampler textureSampler (mag_filter::linear, min_filter::linear);\n"+LN+"constexpr sampler textureRepeat (mag_filter::linear, min_filter::linear,address::repeat );\n";
 			var endStr:String = LN+"}";
 			
 		
@@ -1129,7 +1129,7 @@ package modules.materials.treedata
 					// ft0.xyz = ft0.xyz * 5.0;
 //					str = resultStr + SPACE + EQU + SPACE + texture2D + LEFT_PARENTH + FS + regtexLightMap.id + COMMA + VI + defaultLightUvReg.id + RIGHT_PARENTH + END + LN;
   
-					str = resultStr + SPACE + EQU + SPACE + FS + regtexLightMap.id +".sample(textureSampler,input."+VI + defaultLightUvReg.id + RIGHT_PARENTH + END + LN;
+					str = resultStr + SPACE + EQU + SPACE + FS + regtexLightMap.id+getTextureSampleStr($node) +"input."+VI + defaultLightUvReg.id + RIGHT_PARENTH + END + LN;
 					
 					if(this.scaleLightMap){
 						str += FT + regtempLightMap.id + XYZ + SPACE + EQU + SPACE + FT + regtempLightMap.id + XYZ + SPACE +  MUL_MATH + SPACE +  scalelight + END;
@@ -1629,11 +1629,9 @@ package modules.materials.treedata
 				regtemp.hasInit = true;
 			}
 			
-//			str = resultStr + SPACE + EQU + SPACE + texture2D + LEFT_PARENTH + FS + regtex.id + COMMA + VI + defaultPtReg.id + RIGHT_PARENTH + END + LN;
-			// half4 ft0 = fs0.sample(textureSampler,input.v0);
-			//0  half4 ft1 = texture2D(fs1,v1);
+
 			
-			str = resultStr + SPACE + EQU + SPACE + FS + regtex.id +".sample(textureSampler,input."+VI + defaultPtReg.id +RIGHT_PARENTH+ END + LN;
+			str = resultStr + SPACE + EQU + SPACE + FS + regtex.id+getTextureSampleStr($node) +"input."+VI + defaultPtReg.id +RIGHT_PARENTH+ END + LN;
 			
 			//ft5.xyz = ft5.xyz * ft5.w
 			str += FT + regtemp.id + XYZ + SPACE + EQU + SPACE + FT + regtemp.id + XYZ + SPACE + MUL_MATH + SPACE + FT + regtemp.id + W + END;
@@ -1656,6 +1654,17 @@ package modules.materials.treedata
 			
 			
 		}
+		private function getTextureSampleStr($node:NodeTree):String
+		{
+			var nodeTreeTex:NodeTreeTex=NodeTreeTex($node);
+			if(nodeTreeTex.wrap==0){
+				return ".sample(textureRepeat,";
+			}else{
+				return ".sample(textureSampler,";
+			}
+		
+		}
+		
 		
 		public function processTexNode($node:NodeTree):void{
 			var str:String = new String;
@@ -1680,8 +1689,8 @@ package modules.materials.treedata
 				//str = TEX + SPACE + FT + regtemp.id + COMMA + pNode.getComponentID(input.parentNodeItem.id) + COMMA + FS + regtex.id + SPACE + getTexType(NodeTreeTex($node).wrap);
 				str = resultStr + SPACE + EQU + SPACE + texture2D + LEFT_PARENTH + FS + regtex.id + COMMA + pNode.getComponentID(input.parentNodeItem.id) + RIGHT_PARENTH + END;
 			}else{
-
-				str=resultStr + SPACE + EQU + SPACE + FS + regtex.id+".sample(textureSampler,input."+VI + defaultUvReg.id+ RIGHT_PARENTH + END;
+				
+				str=resultStr + SPACE + EQU + SPACE + FS + regtex.id+getTextureSampleStr($node)+"input."+VI + defaultUvReg.id+ RIGHT_PARENTH + END;
 			}
 			if(NodeTreeTex($node).permul){
 				str += LN + FT + regtemp.id + XYZ + SPACE + MUL_EQU_MATH + SPACE + FT + regtemp.id + W + END;
